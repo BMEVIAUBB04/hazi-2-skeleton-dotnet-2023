@@ -1,0 +1,33 @@
+name: Hazi 2 .NET
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, labeled]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 3
+
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Check neptun.txt
+        uses: akosdudas/ahk-action-neptuncheck@v1
+
+      - name: Prepare .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.201"
+
+      - name: Build .NET code
+        run: dotnet build
+
+      - name: Run .NET unit tests
+        run: dotnet test
